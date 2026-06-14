@@ -1,0 +1,9 @@
+{
+  "name": "smartchurch-cams",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "cd server && npm install && npx prisma generate && npm run build",
+    "start": "node server/dist/server.js"
+  }
+}
