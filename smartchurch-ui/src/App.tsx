@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
-import { AdminWorkspace } from "./AdminWorkspace";
 import { MemberPortal } from "./MemberPortal";
 import {
   churchFeatureOptions,
@@ -87,7 +86,7 @@ type RoadmapPhase = {
   dot: string;
 };
 
-type ViewMode = "public" | "admin" | "member-portal";
+type ViewMode = "public" | "member-portal";
 
 const pageStyles = {
   shell: {
@@ -759,17 +758,6 @@ function SmartChurchCamsBusinessPrd() {
     }
   };
 
-  if (viewMode === "admin") {
-    return (
-      <div style={pageStyles.shell}>
-        <AdminWorkspace
-          apiBaseUrl={apiBaseUrl}
-          onBack={() => setViewMode("public")}
-        />
-      </div>
-    );
-  }
-
   if (viewMode === "member-portal") {
     return (
       <div style={pageStyles.shell}>
@@ -817,7 +805,7 @@ function SmartChurchCamsBusinessPrd() {
           </span>
 
           <button
-            onClick={() => setViewMode("admin")}
+            onClick={() => { window.location.href = '/admin' }}
             style={{
               background: "#185FA5",
               color: "#fff",
