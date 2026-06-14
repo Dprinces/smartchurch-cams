@@ -23,7 +23,7 @@ const CAC_SLUG = "cac-rejoice-arena-district-hq";
 const CAC_LEAD = {
   churchName: "CAC Rejoice Arena District HQ",
   logoUrl:
-    "https://smartchurch-cams.onrender.com/uploads/church-logos/church-logo-1781360751082-816484a3-96cb-4292-aa2f-bf7d69aaeff0.png",
+    "/church-logo.png",
   contactName: "Pastor Segun Awolumate",
   contactEmail: "cacrejoicearena@gmail.com",
   contactPhone: "08034094490",
