@@ -1,0 +1,245 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  MEMBER
+  ADMIN
+  PASTOR
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum MemberStatus {
+  NEW
+  ACTIVE
+  TRANSFERRED
+}
+
+enum ServiceSession {
+  GENERAL
+  FIRST_SERVICE
+  SECOND_SERVICE
+}
+
+enum AttendanceSource {
+  QR
+  MANUAL
+}
+
+enum QrSessionStatus {
+  SCHEDULED
+  ACTIVE
+  CLOSED
+}
+
+enum MemberType {
+  REGULAR
+  NEW_MEMBER
+  FIRST_TIME_VISITOR
+}
+
+enum LeadStatus {
+  NEW
+  REVIEWING
+  QUALIFIED
+  CONVERTED
+  ARCHIVED
+}
+
+enum ChurchStatus {
+  DISCOVERY
+  CONFIGURING
+  SAMPLE_READY
+  LIVE
+}
+
+enum BranchStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id            String            @id @default(cuid())
+  email         String            @unique
+  passwordHash  String
+  phone         String?           @unique
+  role          Role              @default(MEMBER)
+  memberId      String?           @unique
+  member        Member?           @relation(fields: [memberId], references: [id])
+  createdQr     SundayQrSession[] @relation("QrCreatedBy")
+  overrides     ManualOverride[]  @relation("OverrideAddedBy")
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model Member {
+  id                    String             @id @default(cuid())
+  memberCode            String             @unique
+  fullName              String
+  phone                 String             @unique
+  email                 String?            @unique
+  dob                   DateTime?
+  gender                Gender
+  address               String
+  department            String?
+  status                MemberStatus       @default(NEW)
+  emergencyContactName  String
+  emergencyContactPhone String
+  photoUrl              String?
+  memberType            MemberType         @default(REGULAR)
+  user                  User?
+  attendanceRecords     AttendanceRecord[]
+  manualOverrides       ManualOverride[]
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+}
+
+model SundayQrSession {
+  id              String             @id @default(cuid())
+  sessionDate     DateTime
+  qrHash          String             @unique
+  status          QrSessionStatus    @default(SCHEDULED)
+  activatedAt     DateTime?
+  deactivatedAt   DateTime?
+  createdByUserId String?
+  createdByUser   User?              @relation("QrCreatedBy", fields: [createdByUserId], references: [id])
+  branchId        String?
+  branch          Branch?            @relation(fields: [branchId], references: [id])
+  attendance      AttendanceRecord[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model AttendanceRecord {
+  id             String           @id @default(cuid())
+  memberId       String
+  member         Member           @relation(fields: [memberId], references: [id])
+  qrSessionId    String?
+  qrSession      SundayQrSession? @relation(fields: [qrSessionId], references: [id])
+  branchId       String?
+  branch         Branch?          @relation(fields: [branchId], references: [id])
+  scanDate       DateTime
+  entryTimestamp DateTime
+  serviceSession ServiceSession   @default(GENERAL)
+  source         AttendanceSource @default(QR)
+  createdAt      DateTime         @default(now())
+
+  @@unique([memberId, scanDate, serviceSession])
+}
+
+model SundayReport {
+  id               String   @id @default(cuid())
+  reportDate       DateTime @unique
+  totalCount       Int
+  breakdownJson    Json
+  absenteeListJson Json
+  generatedAt      DateTime @default(now())
+}
+
+model ManualOverride {
+  id            String   @id @default(cuid())
+  memberId      String
+  member        Member   @relation(fields: [memberId], references: [id])
+  date          DateTime
+  reason        String
+  addedByUserId String?
+  addedByUser   User?    @relation("OverrideAddedBy", fields: [addedByUserId], references: [id])
+  createdAt     DateTime @default(now())
+}
+
+model ChurchLead {
+  id                    String     @id @default(cuid())
+  churchName            String
+  logoUrl               String?
+  contactName           String
+  contactEmail          String?
+  contactPhone          String
+  address               String
+  city                  String
+  denomination          String?
+  membershipSize        String
+  branchCount           Int        @default(1)
+  serviceDays           String
+  serviceTimes          String
+  preferredFeaturesJson Json
+  preferredChannelsJson Json
+  requirementsNotes     String?
+  status                LeadStatus @default(NEW)
+  church                Church?
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+}
+
+model Church {
+  id                    String       @id @default(cuid())
+  leadId                String       @unique
+  lead                  ChurchLead   @relation(fields: [leadId], references: [id])
+  churchName            String
+  logoUrl               String?
+  slug                  String       @unique
+  primaryContactName    String
+  primaryContactEmail   String?
+  primaryContactPhone   String
+  address               String
+  city                  String
+  denomination          String?
+  membershipSize        String
+  branchCount           Int          @default(1)
+  serviceDays           String
+  serviceTimes          String
+  selectedFeaturesJson  Json
+  communicationJson     Json
+  requirementsNotes     String?
+  status                ChurchStatus @default(DISCOVERY)
+  sampleWorkspace       ChurchSampleWorkspace?
+  branches              Branch[]
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+}
+
+model ChurchSampleWorkspace {
+  id                     String   @id @default(cuid())
+  churchId               String   @unique
+  church                 Church   @relation(fields: [churchId], references: [id])
+  projectName            String
+  subdomain              String
+  adminEmail             String?
+  modulesJson            Json
+  onboardingChecklistJson Json
+  sampleDataJson         Json
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model Branch {
+  id          String         @id @default(cuid())
+  churchId    String
+  church      Church         @relation(fields: [churchId], references: [id])
+  name        String
+  slug        String
+  address     String?
+  city        String?
+  contactName String?
+  contactPhone String?
+  isHq        Boolean        @default(false)
+  status      BranchStatus   @default(INACTIVE)
+  qrSessions  SundayQrSession[]
+  attendance  AttendanceRecord[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([churchId, slug])
+}
