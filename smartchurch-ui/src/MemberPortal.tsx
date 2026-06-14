@@ -27,7 +27,7 @@ type ApiState = {
 const CAC_PRIMARY = "#007bff";
 const CAC_ACCENT = "#28a745";
 const CAC_LOGO =
-  "http://localhost:4000/uploads/church-logos/church-logo-1781360751082-816484a3-96cb-4292-aa2f-bf7d69aaeff0.png";
+  "https://smartchurch-cams.onrender.com/uploads/church-logos/church-logo-1781360751082-816484a3-96cb-4292-aa2f-bf7d69aaeff0.png";
 
 const DEPARTMENTS = [
   "Choir",

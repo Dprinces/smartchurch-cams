@@ -629,7 +629,7 @@ function SmartChurchCamsBusinessPrd() {
   const [logoUploadState, setLogoUploadState] = useState("");
   const apiBaseUrl =
     (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ??
-    "http://localhost:4000/api";
+    "https://smartchurch-cams.onrender.com/api";
 
   const resetChurchIntakeFeedback = () => {
     setChurchIntakeState({ type: "idle", message: "" });
