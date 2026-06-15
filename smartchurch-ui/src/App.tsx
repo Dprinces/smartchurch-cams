@@ -14,7 +14,6 @@ type NavId =
   | "problem"
   | "solution"
   | "features"
-  | "onboarding"
   | "pricing"
   | "roadmap"
   | "faq";
@@ -37,15 +36,6 @@ type Tier = {
   highlight: boolean;
 };
 
-type OnboardingStep = {
-  week: string;
-  title: string;
-  tasks: string[];
-  icon: string;
-  color: string;
-  border: string;
-};
-
 type Feature = {
   icon: string;
   title: string;
@@ -61,6 +51,7 @@ type Faq = {
 };
 
 type ChurchIntakeFormState = {
+  selectedPlan: string;
   churchName: string;
   logoUrl: string;
   contactName: string;
@@ -136,7 +127,6 @@ const NAV: NavItem[] = [
   { id: "problem", label: "The Problem" },
   { id: "solution", label: "The Solution" },
   { id: "features", label: "Features" },
-  { id: "onboarding", label: "Onboarding" },
   { id: "pricing", label: "Pricing" },
   { id: "roadmap", label: "Roadmap" },
   { id: "faq", label: "FAQs" },
@@ -204,61 +194,6 @@ const TIERS: Tier[] = [
     ],
     cta: "Contact Sales",
     highlight: false,
-  },
-];
-
-const ONBOARDING_STEPS: OnboardingStep[] = [
-  {
-    week: "Week 1",
-    title: "Account setup & branding",
-    tasks: [
-      "Church admin receives login credentials",
-      "Upload church logo and configure profile",
-      "Set timezone, service times, and department list",
-      "Invite additional admin accounts",
-    ],
-    icon: "🏛️",
-    color: "#E1F5EE",
-    border: "#0F6E56",
-  },
-  {
-    week: "Week 2",
-    title: "Member data migration",
-    tasks: [
-      "Download and complete the member import template (CSV)",
-      "SmartChurch team reviews and imports existing records",
-      "Member IDs are auto-generated for all existing members",
-      "Admin verifies data accuracy in dashboard",
-    ],
-    icon: "📋",
-    color: "#E6F1FB",
-    border: "#185FA5",
-  },
-  {
-    week: "Week 3",
-    title: "QR code rollout",
-    tasks: [
-      "Sunday entrance QR code generated and tested",
-      "Ushers and gate team trained on scanning process",
-      "Manual override walkthrough for admins",
-      "Pilot Sunday: run alongside existing register",
-    ],
-    icon: "📱",
-    color: "#EEEDFE",
-    border: "#533AB7",
-  },
-  {
-    week: "Week 4",
-    title: "Go live & handover",
-    tasks: [
-      "Full cutover: discontinue paper register",
-      "First automated Sunday report received by pastor",
-      "Pastoral team trained on absentee dashboard",
-      "Support handover + documentation delivered",
-    ],
-    icon: "🚀",
-    color: "#FAEEDA",
-    border: "#854F0B",
   },
 ];
 
@@ -516,25 +451,8 @@ const flowNodes = [
   { label: "2:00 PM", sub: "Report sent", bg: "#FAECE7", color: "#993C1D" },
 ];
 
-const churchNeeds = [
-  {
-    icon: "📋",
-    title: "Existing member list",
-    desc: "Excel or paper register. We handle the import.",
-  },
-  {
-    icon: "📱",
-    title: "An admin smartphone",
-    desc: "For testing and manual override during rollout.",
-  },
-  {
-    icon: "🖨️",
-    title: "A printer or screen",
-    desc: "To display the Sunday entrance QR code at the door.",
-  },
-];
-
 const initialChurchIntakeForm: ChurchIntakeFormState = {
+  selectedPlan: "",
   churchName: "",
   logoUrl: "",
   contactName: "",
@@ -707,6 +625,7 @@ function SmartChurchCamsBusinessPrd() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          selectedPlan: churchIntakeForm.selectedPlan || undefined,
           churchName: churchIntakeForm.churchName,
           logoUrl: churchIntakeForm.logoUrl || undefined,
           contactName: churchIntakeForm.contactName,
@@ -808,24 +727,6 @@ function SmartChurchCamsBusinessPrd() {
             Internal Admin
           </button>
 
-          <button
-            onClick={() => { window.location.href = "/member"; }}
-            style={{
-              background: "#28a745",
-              color: "#fff",
-              border: "none",
-              borderRadius: 999,
-              padding: "8px 14px",
-              fontSize: 12,
-              fontWeight: 800,
-              cursor: "pointer",
-              marginRight: 12,
-              whiteSpace: "nowrap",
-            }}
-          >
-            Member Portal
-          </button>
-
           {NAV.map((item) => (
             <button
               key={item.id}
@@ -862,38 +763,6 @@ function SmartChurchCamsBusinessPrd() {
             }}
           >
             <div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  background: "#E6F1FB",
-                  borderRadius: 999,
-                  padding: "6px 14px",
-                  marginBottom: 24,
-                }}
-              >
-                <span
-                  style={{
-                    width: 7,
-                    height: 7,
-                    borderRadius: "50%",
-                    background: "#185FA5",
-                    display: "inline-block",
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: "#185FA5",
-                    letterSpacing: "0.06em",
-                  }}
-                >
-                  PRODUCT REQUIREMENTS DOCUMENT - v1.1
-                </span>
-              </div>
-
               <h1
                 style={{
                   fontSize: "clamp(2.6rem, 6vw, 4.3rem)",
@@ -924,7 +793,7 @@ function SmartChurchCamsBusinessPrd() {
 
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <button
-                  onClick={() => scrollToSection("onboarding")}
+                  onClick={scrollToRegistrationForm}
                   style={{
                     background: "#185FA5",
                     color: "#fff",
@@ -936,7 +805,7 @@ function SmartChurchCamsBusinessPrd() {
                     cursor: "pointer",
                   }}
                 >
-                  See onboarding plan
+                  Get Started
                 </button>
                 <button
                   onClick={() => scrollToSection("pricing")}
@@ -1337,172 +1206,6 @@ function SmartChurchCamsBusinessPrd() {
           </div>
         </Section>
 
-        <Section id="onboarding">
-          <SectionLabel color="#533AB7">Onboarding</SectionLabel>
-          <SectionTitle>
-            From paper register to live system in 4 weeks
-          </SectionTitle>
-          <SectionSub>
-            We guide your church through every step. No technical knowledge is
-            required from your team.
-          </SectionSub>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 20,
-              marginBottom: 40,
-            }}
-          >
-            {ONBOARDING_STEPS.map((step) => (
-              <div
-                key={step.week}
-                style={{
-                  background: step.color,
-                  borderRadius: 16,
-                  padding: 28,
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginBottom: 16,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 800,
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      color: step.border,
-                    }}
-                  >
-                    {step.week}
-                  </span>
-                  <span style={{ fontSize: 24 }}>{step.icon}</span>
-                </div>
-
-                <h3
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 800,
-                    color: "#1a1a1a",
-                    margin: "0 0 16px",
-                  }}
-                >
-                  {step.title}
-                </h3>
-
-                <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-                  {step.tasks.map((task) => (
-                    <li
-                      key={task}
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: 8,
-                        marginBottom: 8,
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: 16,
-                          height: 16,
-                          borderRadius: "50%",
-                          background: step.border,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flex: "none",
-                          marginTop: 1,
-                        }}
-                      >
-                        <svg
-                          width="8"
-                          height="8"
-                          viewBox="0 0 8 8"
-                          fill="none"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M1.5 4L3 5.5L6.5 2.5"
-                            stroke="white"
-                            strokeWidth="1.2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </span>
-                      <span
-                        style={{ fontSize: 13, color: "#444", lineHeight: 1.5 }}
-                      >
-                        {task}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div
-            style={{
-              background: "#FAFAF8",
-              border: "1px solid #E8E8E4",
-              borderRadius: 16,
-              padding: 28,
-            }}
-          >
-            <h3 style={{ fontSize: 16, fontWeight: 800, margin: "0 0 16px" }}>
-              What your church provides
-            </h3>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: 16,
-              }}
-            >
-              {churchNeeds.map((item) => (
-                <div
-                  key={item.title}
-                  style={{ display: "flex", gap: 12, alignItems: "flex-start" }}
-                >
-                  <span style={{ fontSize: 20, flex: "none" }}>
-                    {item.icon}
-                  </span>
-                  <div>
-                    <p
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 700,
-                        margin: "0 0 4px",
-                      }}
-                    >
-                      {item.title}
-                    </p>
-                    <p
-                      style={{
-                        fontSize: 13,
-                        color: "#777",
-                        margin: 0,
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Section>
-
         <Section id="pricing">
           <SectionLabel color="#0F6E56">Pricing</SectionLabel>
           <SectionTitle>Simple, church-sized pricing</SectionTitle>
@@ -1666,6 +1369,10 @@ function SmartChurchCamsBusinessPrd() {
                 </div>
 
                 <button
+                  onClick={() => {
+                    setChurchIntakeForm((prev) => ({ ...prev, selectedPlan: tier.name }));
+                    scrollToRegistrationForm();
+                  }}
                   style={{
                     width: "100%",
                     background: tier.highlight ? tier.color : "#fff",
@@ -1902,7 +1609,7 @@ function SmartChurchCamsBusinessPrd() {
                 margin: "0 0 16px",
               }}
             >
-              Ready to onboard your church?
+              Start your SmartChurch journey
             </h2>
 
             <p
@@ -1914,8 +1621,8 @@ function SmartChurchCamsBusinessPrd() {
                 lineHeight: 1.7,
               }}
             >
-              Register your church, tell us the features you need, and we will
-              tailor the software around your ministry workflow.
+              Choose a plan above, register your church, and we will configure
+              the platform around your ministry before launch day.
             </p>
 
             <div
@@ -1958,11 +1665,6 @@ function SmartChurchCamsBusinessPrd() {
               </button>
             </div>
 
-            <p style={{ fontSize: 12, color: "#888", margin: "20px 0 0" }}>
-              SmartChurch church onboarding intake · NDPR aware · Built for
-              Nigerian churches by DPRINCEDEVELOPER
-            </p>
-
             <div
               id="get-started-form"
               style={{
@@ -1977,17 +1679,16 @@ function SmartChurchCamsBusinessPrd() {
                 boxShadow: "0 16px 40px rgba(24, 95, 165, 0.08)",
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 16,
-                  alignItems: "flex-start",
-                  flexWrap: "wrap",
-                  marginBottom: 20,
-                }}
-              >
-                <div>
+              <div style={{ marginBottom: 24 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    marginBottom: 12,
+                    flexWrap: "wrap",
+                  }}
+                >
                   <p
                     style={{
                       fontSize: 12,
@@ -1995,48 +1696,50 @@ function SmartChurchCamsBusinessPrd() {
                       color: "#185FA5",
                       letterSpacing: "0.08em",
                       textTransform: "uppercase",
-                      margin: "0 0 8px",
-                    }}
-                  >
-                    Church Intake
-                  </p>
-                  <h3
-                    style={{
-                      fontSize: 24,
-                      fontWeight: 800,
-                      margin: "0 0 8px",
-                      color: "#111",
-                    }}
-                  >
-                    Register your church and project needs
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: 14,
-                      color: "#666",
-                      lineHeight: 1.6,
                       margin: 0,
-                      maxWidth: 560,
                     }}
                   >
-                    This form captures your church profile, operating context,
-                    and required features so the product can be configured to
-                    your preference before rollout.
+                    Church Registration
                   </p>
+                  {churchIntakeForm.selectedPlan ? (
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 800,
+                        color: "#fff",
+                        background: "#185FA5",
+                        borderRadius: 999,
+                        padding: "3px 10px",
+                        letterSpacing: "0.06em",
+                      }}
+                    >
+                      {churchIntakeForm.selectedPlan} Plan
+                    </span>
+                  ) : null}
                 </div>
-
-                <div
+                <h3
                   style={{
-                    fontSize: 12,
-                    color: "#888",
-                    background: "#F6F8FC",
-                    borderRadius: 999,
-                    padding: "8px 12px",
-                    fontWeight: 700,
+                    fontSize: 24,
+                    fontWeight: 800,
+                    margin: "0 0 8px",
+                    color: "#111",
                   }}
                 >
-                  POST {apiBaseUrl}/church-intake
-                </div>
+                  Tell us about your church
+                </h3>
+                <p
+                  style={{
+                    fontSize: 14,
+                    color: "#666",
+                    lineHeight: 1.6,
+                    margin: 0,
+                    maxWidth: 560,
+                  }}
+                >
+                  Fill in your church details and preferred features. Our team
+                  will configure the platform and reach out within 24 hours to
+                  get you live.
+                </p>
               </div>
 
               <form onSubmit={handleChurchIntakeSubmit}>
