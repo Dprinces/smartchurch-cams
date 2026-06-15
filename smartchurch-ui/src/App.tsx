@@ -1,6 +1,7 @@
+"use client";
+
 import { useState } from "react";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
-import { MemberPortal } from "./MemberPortal";
 import {
   churchFeatureOptions,
   communicationChannelOptions,
@@ -85,8 +86,6 @@ type RoadmapPhase = {
   color: string;
   dot: string;
 };
-
-type ViewMode = "public" | "member-portal";
 
 const pageStyles = {
   shell: {
@@ -616,7 +615,6 @@ function Tag({
 }
 
 function SmartChurchCamsBusinessPrd() {
-  const [viewMode, setViewMode] = useState<ViewMode>("public");
   const [activeNav, setActiveNav] = useState<NavId>("overview");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [churchIntakeForm, setChurchIntakeForm] =
@@ -627,8 +625,7 @@ function SmartChurchCamsBusinessPrd() {
   }>({ type: "idle", message: "" });
   const [logoUploadState, setLogoUploadState] = useState("");
   const apiBaseUrl =
-    (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ??
-    "https://smartchurch-cams.onrender.com/api";
+    (process.env.NEXT_PUBLIC_API_URL ?? "https://smartchurch-cams.onrender.com/api").replace(/\/$/, "");
 
   const resetChurchIntakeFeedback = () => {
     setChurchIntakeState({ type: "idle", message: "" });
@@ -758,17 +755,6 @@ function SmartChurchCamsBusinessPrd() {
     }
   };
 
-  if (viewMode === "member-portal") {
-    return (
-      <div style={pageStyles.shell}>
-        <MemberPortal
-          apiBaseUrl={apiBaseUrl}
-          onBack={() => setViewMode("public")}
-        />
-      </div>
-    );
-  }
-
   return (
     <div style={pageStyles.shell}>
       <nav
@@ -823,7 +809,7 @@ function SmartChurchCamsBusinessPrd() {
           </button>
 
           <button
-            onClick={() => setViewMode("member-portal")}
+            onClick={() => { window.location.href = "/member"; }}
             style={{
               background: "#28a745",
               color: "#fff",

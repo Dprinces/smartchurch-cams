@@ -1,3 +1,5 @@
 cac-rejoice-arena-website/
 node_modules/
 .DS_Store
+.next/
+

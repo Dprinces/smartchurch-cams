@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 import {
