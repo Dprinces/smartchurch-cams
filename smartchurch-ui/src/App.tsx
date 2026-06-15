@@ -2058,7 +2058,7 @@ function SmartChurchCamsBusinessPrd() {
                     {
                       label: "Contact Person",
                       field: "contactName" as const,
-                      placeholder: "Pastor Segun Awolumate",
+                      placeholder: "Pastor James Adeyemi",
                       type: "text",
                     },
                     {

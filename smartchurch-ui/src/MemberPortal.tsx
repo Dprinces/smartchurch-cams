@@ -26,10 +26,8 @@ type ApiState = {
   message: string;
 };
 
-const CAC_PRIMARY = "#007bff";
-const CAC_ACCENT = "#28a745";
-const CAC_LOGO =
-  "https://smartchurch-cams.onrender.com/uploads/church-logos/church-logo-1781360751082-816484a3-96cb-4292-aa2f-bf7d69aaeff0.png";
+const PRIMARY = "#185FA5";
+const ACCENT = "#28a745";
 
 const DEPARTMENTS = [
   "Choir",
@@ -217,9 +215,9 @@ export function MemberPortal({
       {/* Header */}
       <div
         style={{
-          background: CAC_PRIMARY,
+          background: PRIMARY,
           padding: "0 20px",
-          boxShadow: "0 2px 8px rgba(0,123,255,0.18)",
+          boxShadow: "0 2px 8px rgba(24,95,165,0.18)",
         }}
       >
         <div
@@ -232,21 +230,25 @@ export function MemberPortal({
             padding: "14px 0",
           }}
         >
-          <img
-            src={CAC_LOGO}
-            alt="CAC Rejoice Arena logo"
+          {/* Church icon */}
+          <div
             style={{
               width: 44,
               height: 44,
               borderRadius: 10,
-              objectFit: "cover",
-              background: "#fff",
+              background: "rgba(255,255,255,0.15)",
               border: "2px solid rgba(255,255,255,0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
             }}
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2L12 6M10 4H14" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M3 20V11L12 5L21 11V20H15V14H9V20H3Z" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
           <div style={{ flex: 1 }}>
             <p
               style={{
@@ -256,7 +258,7 @@ export function MemberPortal({
                 margin: 0,
               }}
             >
-              CAC Rejoice Arena
+              Member Portal
             </p>
             <p
               style={{
@@ -317,11 +319,11 @@ export function MemberPortal({
                 padding: "14px 16px",
                 fontSize: 13,
                 fontWeight: tab === t.id ? 700 : 500,
-                color: tab === t.id ? CAC_PRIMARY : "#667085",
+                color: tab === t.id ? PRIMARY : "#667085",
                 cursor: "pointer",
                 borderBottom:
                   tab === t.id
-                    ? `2px solid ${CAC_PRIMARY}`
+                    ? `2px solid ${PRIMARY}`
                     : "2px solid transparent",
                 whiteSpace: "nowrap",
               }}
@@ -359,7 +361,7 @@ export function MemberPortal({
                     width: 52,
                     height: 52,
                     borderRadius: "50%",
-                    background: CAC_ACCENT,
+                    background: ACCENT,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -404,7 +406,7 @@ export function MemberPortal({
                 <div
                   style={{
                     background: "#fff",
-                    border: `2px solid ${CAC_ACCENT}`,
+                    border: `2px solid ${ACCENT}`,
                     borderRadius: 12,
                     padding: "14px 24px",
                     display: "inline-block",
@@ -433,7 +435,7 @@ export function MemberPortal({
                     setRegState({ type: "idle", message: "" });
                   }}
                   style={{
-                    background: CAC_PRIMARY,
+                    background: PRIMARY,
                     color: "#fff",
                     border: "none",
                     borderRadius: 10,
@@ -465,8 +467,8 @@ export function MemberPortal({
                     margin: "0 0 24px",
                   }}
                 >
-                  Fill this form once to join the CAC Rejoice Arena member
-                  database. You will receive a unique Member ID.
+                  Fill this form once to join the church member database. You
+                  will receive a unique Member ID.
                 </p>
 
                 <div
@@ -562,7 +564,7 @@ export function MemberPortal({
                       type="text"
                       value={form.address}
                       onChange={(e) => updateField("address", e.target.value)}
-                      placeholder="12 Church Street, Ado-Ekiti"
+                      placeholder="12 Church Street"
                       required
                     />
                   </Field>
@@ -637,7 +639,7 @@ export function MemberPortal({
                     disabled={regState.type === "loading"}
                     style={{
                       background:
-                        regState.type === "loading" ? "#80bdff" : CAC_PRIMARY,
+                        regState.type === "loading" ? "#80bdff" : PRIMARY,
                       color: "#fff",
                       border: "none",
                       borderRadius: 10,
@@ -701,9 +703,10 @@ export function MemberPortal({
                 alignItems: "flex-start",
               }}
             >
-              <span style={{ fontSize: 18, flex: "none", marginTop: 1 }}>
-                ℹ️
-              </span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 1 }} aria-hidden="true">
+                <circle cx="12" cy="12" r="10" stroke="#1D4ED8" strokeWidth="2"/>
+                <path d="M12 8v4M12 16h.01" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
               <p style={{ fontSize: 13, color: "#1D4ED8", margin: 0 }}>
                 Scanning the QR code at the church entrance automatically
                 records your attendance. Use this form only if you arrived but
@@ -726,7 +729,7 @@ export function MemberPortal({
                     width: 48,
                     height: 48,
                     borderRadius: "50%",
-                    background: CAC_ACCENT,
+                    background: ACCENT,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -764,7 +767,7 @@ export function MemberPortal({
                     setCheckInState({ type: "idle", message: "" })
                   }
                   style={{
-                    background: CAC_ACCENT,
+                    background: ACCENT,
                     color: "#fff",
                     border: "none",
                     borderRadius: 10,
@@ -788,7 +791,7 @@ export function MemberPortal({
                       onChange={(e) =>
                         setCheckInForm({ memberId: e.target.value })
                       }
-                      placeholder="RJ-00001"
+                      placeholder="MBR-00001"
                       required
                     />
                   </Field>
@@ -799,8 +802,7 @@ export function MemberPortal({
                       margin: "6px 0 0",
                     }}
                   >
-                    Your Member ID was given to you when you registered. Format:
-                    RJ-00001
+                    Your Member ID was given to you when you registered. Example: MBR-00001
                   </p>
                 </div>
 
@@ -819,7 +821,7 @@ export function MemberPortal({
                       background:
                         checkInState.type === "loading"
                           ? "#6fc88a"
-                          : CAC_ACCENT,
+                          : ACCENT,
                       color: "#fff",
                       border: "none",
                       borderRadius: 10,
